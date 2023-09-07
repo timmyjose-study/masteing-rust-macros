@@ -114,8 +114,50 @@ macro_rules! listing_literals_rep {
     }};
 }
 
+macro_rules! two_vecs {
+    ($($e:expr),* ; $($f:expr),*) => {{
+        let mut v1 = Vec::new();
+        let mut v2 = Vec::new();
+
+        $(
+            v1.push($e);
+        )*
+
+            $(
+                v2.push($f);
+            )*
+
+            (v1, v2)
+    }}
+}
+
+macro_rules! hashmap {
+    ($($k:expr => $v:expr),*$(,)?) => {{
+        let mut m = HashMap::new();
+        $(
+            m.insert($k, $v);
+         )*
+        m
+    }};
+}
+
+macro_rules! graph {
+    ($($from:literal -> ($($to:literal),*));*$(;)?) => {{
+        let mut v = Vec::new();
+
+        $(
+            $(
+                v.push(($from, $to));
+            )*
+        )*
+        v
+    }};
+}
+
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     #[test]
     fn test_ret_3() {
         assert_eq!(3, ret_3!());
@@ -195,5 +237,61 @@ mod tests {
             listing_literals_rep!(the "lion" and the "witch" and the "wardrobe")
         );
         assert_eq!(vec![9, 5], listing_literals_rep!(the 9 and the 5));
+    }
+
+    #[test]
+    fn test_two_vecs() {
+        assert_eq!(
+            (vec![1, 2, 3], vec!["one", "two", "three"]),
+            two_vecs!(1, 2, 3; "one", "two", "three")
+        );
+        assert_eq!(
+            (vec![1, 2, 3], vec!["one", "two"]),
+            two_vecs!(1, 2, 3; "one", "two")
+        );
+    }
+
+    #[test]
+    fn test_hashmap() {
+        fn print_hashmap(m: &HashMap<&str, &str>) {
+            println!("{m:#?}");
+        }
+
+        let value = "my_string";
+        let my_hashmap = hashmap!(
+            "hash" => "map",
+            "Key" => value
+        );
+        print_hashmap(&my_hashmap);
+
+        let another_hashmap = hashmap! {
+            "mash" => "cash",
+        };
+        print_hashmap(&another_hashmap);
+    }
+
+    #[test]
+    fn test_graph() {
+        assert_eq!(
+            vec![
+                (1, 2),
+                (1, 3),
+                (1, 4),
+                (1, 5),
+                (2, 1),
+                (2, 3),
+                (3, 2),
+                (5, 1),
+                (5, 2),
+                (5, 3)
+            ],
+            graph!(
+                1 -> (2, 3, 4, 5);
+                2 -> (1, 3);
+                3 -> (2);
+                4 -> ();
+                5 -> (1, 2, 3);
+            )
+        );
     }
 }
