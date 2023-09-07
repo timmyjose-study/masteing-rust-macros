@@ -165,6 +165,79 @@ macro_rules! sum {
     }};
 }
 
+macro_rules! stringify_tt {
+    (one) => {{
+        "1"
+    }};
+
+    (two) => {{
+        "2"
+    }};
+
+    ($any:tt) => {{
+        stringify!($any)
+    }};
+}
+
+macro_rules! digit {
+    (zero) => {
+        "0"
+    };
+
+    (one) => {
+        "1"
+    };
+
+    (two) => {
+        "2"
+    };
+
+    (three) => {
+        "3"
+    };
+
+    (four) => {
+        "4"
+    };
+
+    (five) => {
+        "5"
+    };
+
+    (six) => {
+        "6"
+    };
+
+    (seven) => {
+        "7"
+    };
+
+    (eight) => {
+        "8"
+    };
+
+    (nine) => {
+        "9"
+    };
+}
+
+macro_rules! number {
+    ($($tok:tt)*) => {{
+        concat!($(digit!($tok)),*)
+    }};
+}
+
+// recursion
+macro_rules! linked_list {
+    () => {
+        LinkedList::Empty
+    };
+
+    ($e:expr $(, $es:expr)*) => {
+        LinkedList::Node($e, Box::new(linked_list!($($es),*)))
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
@@ -311,5 +384,51 @@ mod tests {
         assert_eq!(3, sum!(1, 2));
         assert_eq!(3, sum!(1, 2,));
         assert_eq!(15, sum!(1, 2, 3, 4, 5));
+    }
+
+    #[test]
+    fn test_stringify_tt() {
+        assert_eq!("1", stringify_tt!(one));
+        assert_eq!("2", stringify_tt!(two));
+        assert_eq!("while", stringify_tt!(while));
+        assert_eq!("bing_bang_boom", stringify_tt!(bing_bang_boom));
+    }
+
+    #[test]
+    fn test_number_and_digit() {
+        assert_eq!(
+            218529,
+            number!(nine three seven two zero).parse::<i32>().unwrap()
+                + number!(one two four eight zero nine)
+                    .parse::<i32>()
+                    .unwrap()
+        );
+    }
+
+    #[test]
+    fn test_linked_list() {
+        #[derive(Debug, PartialEq, Eq)]
+        enum LinkedList {
+            Empty,
+            Node(i32, Box<LinkedList>),
+        }
+
+        let expected = LinkedList::Node(
+            1,
+            Box::new(LinkedList::Node(
+                2,
+                Box::new(LinkedList::Node(
+                    3,
+                    Box::new(LinkedList::Node(
+                        4,
+                        Box::new(LinkedList::Node(5, Box::new(LinkedList::Empty))),
+                    )),
+                )),
+            )),
+        );
+
+        let actual = linked_list!(1, 2, 3, 4, 5);
+
+        assert_eq!(expected, actual);
     }
 }
