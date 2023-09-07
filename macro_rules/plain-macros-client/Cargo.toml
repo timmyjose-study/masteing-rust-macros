@@ -1,0 +1,8 @@
+[package]
+name = "plain-macros-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+plain-macros = { path = "../plain-macros" }
