@@ -154,6 +154,17 @@ macro_rules! graph {
     }};
 }
 
+macro_rules! sum {
+    ($first:expr , $($next:expr),+$(,)?) => {{
+        let mut s = $first;
+
+        $(
+            s += $next;
+        )*
+        s
+    }};
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
@@ -293,5 +304,12 @@ mod tests {
                 5 -> (1, 2, 3);
             )
         );
+    }
+
+    #[test]
+    fn test_sum() {
+        assert_eq!(3, sum!(1, 2));
+        assert_eq!(3, sum!(1, 2,));
+        assert_eq!(15, sum!(1, 2, 3, 4, 5));
     }
 }
