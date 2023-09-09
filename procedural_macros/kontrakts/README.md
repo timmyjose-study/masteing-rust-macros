@@ -1,0 +1,1 @@
+Working through (and hacking on ) the [Ferrous Systems procedural macros example](https://github.com/ferrous-systems/testing-proc-macros) for the purpose of mastering procedural macros in Rust.
