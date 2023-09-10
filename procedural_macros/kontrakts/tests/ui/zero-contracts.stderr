@@ -2,7 +2,7 @@ error: no contracts were specified
 
          = help: add a `#[precondition]`
 
- --> tests/ui/zero-contracts.rs:3:1
+ --> $DIR/zero-contracts.rs:3:1
   |
 3 | #[contracts]
   | ^^^^^^^^^^^^

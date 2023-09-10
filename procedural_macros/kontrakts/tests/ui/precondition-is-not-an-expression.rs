@@ -1,6 +1,6 @@
 use kontrakts::contracts;
 
-#[constracts]
+#[contracts]
 #[precondition(struct)]
 fn f() {}
 
